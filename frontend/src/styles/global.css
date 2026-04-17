@@ -1,0 +1,364 @@
+:root {
+  /* Default to light theme values */
+  --color-bg: #ffffff;
+  --color-text: #2d3436;
+  --color-correct: #00b894;
+  --color-error: #d63031;
+  --color-cursor: #2d3436;
+  --color-cursor-bg: rgba(9, 132, 227, 0.2);
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: background 0.3s, color 0.3s;
+  line-height: 1.6;
+}
+
+.typing-engine {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.text-container {
+  position: relative;
+  font-size: 1.5rem;
+  line-height: 1.8;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: var(--color-bg-secondary);
+  margin: 1rem 0;
+  min-height: 150px;
+  scrollbar-width: none;
+}
+
+.text-container::-webkit-scrollbar {
+  display: none;
+}
+
+.char {
+  transition: color 0.1s, background-color 0.1s;
+  position: relative;
+}
+
+.char.correct {
+  color: var(--color-correct);
+}
+
+.char.incorrect {
+  color: var(--color-error);
+  text-decoration: underline wavy var(--color-error);
+}
+
+.char.cursor {
+  background: var(--color-cursor-bg);
+  border-radius: 2px;
+}
+
+.word.current {
+  position: relative;
+}
+
+.word.current::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  opacity: 0.5;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+.focus-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.focus-hint {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.focus-mode:hover .focus-hint {
+  opacity: 1;
+}
+
+.results-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  backdrop-filter: blur(4px);
+}
+
+.results-card {
+  background: var(--color-bg);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: var(--color-shadow);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.result-item {
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 8px;
+}
+
+.result-item .label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.result-item .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.hint {
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.hint kbd {
+  background: var(--color-bg-secondary);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin: 0 0.25rem;
+  border: 1px solid var(--color-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .typing-engine {
+    padding: 1rem;
+  }
+  
+  .text-container {
+    font-size: 1.25rem;
+    padding: 1rem;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Stats Bar Styles */
+.stats-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-border);
+}
+
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-bg);
+  border-radius: 8px;
+  min-width: 80px;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  flex-shrink: 0;
+}
+
+.stat-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.stat-value .font-mono {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Timer Progress Bar */
+.timer-progress {
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .stats-container {
+    gap: 1rem;
+  }
+  
+  .stat-item {
+    padding: 0.4rem 0.8rem;
+    min-width: 70px;
+  }
+  
+  .stat-value .font-mono {
+    font-size: 1.1rem;
+  }
+}
+
+/* Animation utilities */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse {
+  animation: pulse 1s infinite;
+}
+
+
+/* frontend/src/styles/global.css - Add these rules */
+
+.char {
+  display: inline;
+  font-family: var(--font-mono);
+  transition: color 0.05s, background-color 0.05s;
+  position: relative;
+}
+
+.char.space {
+  /* Ensure spaces are visible for debugging, or make subtle */
+  border-bottom: 2px solid transparent;
+}
+
+.char.space.correct {
+  border-bottom-color: var(--color-correct);
+}
+
+.char.space.incorrect {
+  border-bottom-color: var(--color-error);
+  border-bottom-style: wavy;
+}
+
+.char.cursor {
+  border-left: 2px solid var(--color-cursor);
+  animation: caret-blink 1s step-end infinite;
+  margin-left: -1px; /* Align caret with character */
+}
+
+@keyframes caret-blink {
+  0%, 100% { border-left-color: var(--color-cursor); }
+  50% { border-left-color: transparent; }
+}
+
+/* Word-level highlighting (optional enhancement) */
+.word {
+  display: inline;
+}
+
+.word.current {
+  position: relative;
+}
+
+.word.current::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  opacity: 0.3;
+  border-radius: 1px;
+}
