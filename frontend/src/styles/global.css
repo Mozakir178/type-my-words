@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
   /* Default to light theme values */
   --color-bg: #ffffff;

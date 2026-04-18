@@ -210,7 +210,9 @@ export const useTypingTest = ({ mode, duration, wordCount, text: customText, onT
       mode: mode, // ✅ Fixed: use prop, not state.mode
       completedAt: new Date().toISOString(),
       text: state.text,
-      userInput: state.userInput
+      userInput: state.userInput,
+      startTime: state.startTime,
+      endTime: endTime
     };
     
     setState(prev => ({
@@ -223,7 +225,9 @@ export const useTypingTest = ({ mode, duration, wordCount, text: customText, onT
     }));
     
     // Callback to parent component
+    console.log(results)
     onTestComplete?.(results);
+
   }, [state, mode, onTestComplete]);
 
   // Restart test (Tab key)
