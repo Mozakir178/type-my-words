@@ -5,19 +5,32 @@ import {
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
 
+
 const CustomTooltip = ({ active, payload, label, type = 'line' }) => {
   if (!active || !payload?.length) return null;
-  
+
+  const fullDate = payload[0]?.payload?.fullDate;
+
+  let formattedDate = label;
+
+  if (type === 'line' && fullDate) {
+    try {
+      formattedDate = format(parseISO(fullDate), 'MMM d, yyyy');
+    } catch {
+      formattedDate = label; // fallback
+    }
+  }
+
   return (
     <div className="chart-tooltip">
       <div className="tooltip-label">
-        {type === 'line' 
-          ? format(parseISO(label), 'MMM d, yyyy')
-          : label}
+        {formattedDate}
       </div>
+
       {payload.map((entry, index) => (
         <div key={index} className="tooltip-item" style={{ color: entry.color }}>
-          {entry.name}: {entry.value}{entry.name === 'Accuracy' ? '%' : ''}
+          {entry.name}: {entry.value}
+          {entry.name === 'Accuracy' ? '%' : ''}
         </div>
       ))}
     </div>

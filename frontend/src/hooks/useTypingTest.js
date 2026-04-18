@@ -225,7 +225,6 @@ export const useTypingTest = ({ mode, duration, wordCount, text: customText, onT
     }));
     
     // Callback to parent component
-    console.log(results)
     onTestComplete?.(results);
 
   }, [state, mode, onTestComplete]);
